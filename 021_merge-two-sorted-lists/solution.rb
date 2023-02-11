@@ -10,61 +10,45 @@
 # @param {ListNode} list2
 # @return {ListNode}
 def merge_two_lists(list1, list2)
-  result = nil
+  first, tail = nil, nil
   cur1, cur2 = list1, list2
 
-  first = nil
-
-  def advance(val, result)
-    first = false
-    if result == nil
-      result = ListNode.new(val=val)
-      first = true
-    else
-      result.next = ListNode.new(val=val)
-      result = result.next
-    end
-    [result, first]
-  end
-
   loop do
-    break if cur1 == nil && cur2 == nil
-
-    fwd1, fwd2 = false, false
+    fwd = nil
 
     case [cur1 == nil, cur2 == nil]
+    in [true, true]
+        break
     in [true, false]
-        fwd2 = true
+        fwd = cur2
     in [false, true]
-        fwd1 = true
+        fwd = cur1
     in [false, false]
-      if cur1.val == cur2.val
-        fwd1, fwd2 = true, true
-      elsif cur1.val < cur2.val
-        fwd1 = true
+      if cur1.val < cur2.val
+        fwd = cur1
       else
-        fwd2 = true
+        fwd = cur2
       end
     end
 
-    if fwd1
-      result, has_first = advance(cur1.val, result)
-      first = result if has_first
-      cur1 = cur1.next
+    if tail == nil
+      tail = ListNode.new(val=fwd.val)
+      first = tail
+    else
+      tail.next = ListNode.new(val=fwd.val)
+      tail = tail.next
     end
-    if fwd2
-      result, has_first = advance(cur2.val, result)
-      first = result if has_first
-      cur2 = cur2.next
-    end
+
+    cur1 = cur1.next if fwd == cur1
+    cur2 = cur2.next if fwd == cur2
   end
 
   first
 end
 
-# Runtime 94 ms Beats 52.6%
-# Memory 211.2 MB Beats 7.99%
-# https://leetcode.com/problems/merge-two-sorted-lists/submissions/896016145/
+# Runtime 91 ms Beats 61.86%
+# Memory 211.1 MB Beats 50.77%
+# https://leetcode.com/problems/merge-two-sorted-lists/submissions/896020543/
 
 class ListNode
     attr_accessor :val, :next
